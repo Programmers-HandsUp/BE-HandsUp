@@ -21,9 +21,11 @@ import dev.handsup.common.dto.PageResponse;
 import dev.handsup.common.exception.NotFoundException;
 import dev.handsup.common.exception.ValidationException;
 import dev.handsup.review.repository.ReviewRepository;
+import dev.handsup.user.domain.Address;
 import dev.handsup.user.domain.User;
 import dev.handsup.user.dto.UserMapper;
-import dev.handsup.user.dto.request.JoinUserRequest;
+import dev.handsup.user.dto.request.JoinUserCredentialsRequest;
+import dev.handsup.user.dto.request.JoinUserProfileRequest;
 import dev.handsup.user.dto.response.EmailAvailabilityResponse;
 import dev.handsup.user.dto.response.UserBuyHistoryResponse;
 import dev.handsup.user.dto.response.UserProfileResponse;
@@ -65,19 +67,32 @@ public class UserService {
 	}
 
 	@Transactional
-	public Long join(JoinUserRequest request) {
+	public Long joinCredentials(JoinUserCredentialsRequest request) {
 		validateDuplicateEmail(request.email());
 		User user = UserMapper.toUser(request, encryptHelper);
 		User savedUser = userRepository.save(user);    // 저장된 유저 확인
 
+		return savedUser.getId();
+	}
+
+	@Transactional
+	public Long joinProfile(JoinUserProfileRequest request) {
+		User user = getUserByEmail(request.email());
+
+		user.updateProfile(
+			request.nickname(),
+			Address.of(request.si(), request.gu(), request.dong()),
+			request.profileImageUrl()
+		);
+
 		request.productCategoryIds().forEach(productCategoryId -> {
 			ProductCategory productCategory = getProductCategoryById(productCategoryId);
 			preferredProductCategoryRepository.save(
-				PreferredProductCategory.of(savedUser, productCategory)
+				PreferredProductCategory.of(user, productCategory)
 			);
 		});
 
-		return savedUser.getId();
+		return user.getId();
 	}
 
 	public EmailAvailabilityResponse isEmailAvailable(String email) {

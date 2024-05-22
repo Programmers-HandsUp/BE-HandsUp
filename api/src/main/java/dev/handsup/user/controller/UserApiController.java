@@ -14,7 +14,8 @@ import dev.handsup.auth.annotation.NoAuth;
 import dev.handsup.auth.jwt.JwtAuthorization;
 import dev.handsup.common.dto.PageResponse;
 import dev.handsup.user.domain.User;
-import dev.handsup.user.dto.request.JoinUserRequest;
+import dev.handsup.user.dto.request.JoinUserCredentialsRequest;
+import dev.handsup.user.dto.request.JoinUserProfileRequest;
 import dev.handsup.user.dto.response.EmailAvailabilityResponse;
 import dev.handsup.user.dto.response.JoinUserResponse;
 import dev.handsup.user.dto.response.UserBuyHistoryResponse;
@@ -39,13 +40,25 @@ public class UserApiController {
 	private final UserService userService;
 
 	@NoAuth
-	@PostMapping("/api/users")
-	@Operation(summary = "회원가입 API", description = "회원가입을 한다")
+	@PostMapping("/api/users/step1")
+	@Operation(summary = "회원가입 API(Email, Pw)", description = "회원가입을 한다")
 	@ApiResponse(useReturnTypeSchema = true)
-	public ResponseEntity<JoinUserResponse> join(
-		final @Valid @RequestBody JoinUserRequest request
+	public ResponseEntity<JoinUserResponse> joinStep1(
+		final @Valid @RequestBody JoinUserCredentialsRequest request
 	) {
-		Long userId = userService.join(request);
+		Long userId = userService.joinCredentials(request);
+		JoinUserResponse response = JoinUserResponse.from(userId);
+		return ResponseEntity.ok(response);
+	}
+
+	@NoAuth
+	@PostMapping("/api/users/step2")
+	@Operation(summary = "회원가입 API(프로필)", description = "회원가입을 한다")
+	@ApiResponse(useReturnTypeSchema = true)
+	public ResponseEntity<JoinUserResponse> joinStep2(
+		final @Valid @RequestBody JoinUserProfileRequest request
+	) {
+		Long userId = userService.joinProfile(request);
 		JoinUserResponse response = JoinUserResponse.from(userId);
 		return ResponseEntity.ok(response);
 	}
