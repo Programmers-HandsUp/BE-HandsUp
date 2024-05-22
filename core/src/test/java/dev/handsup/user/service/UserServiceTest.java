@@ -26,7 +26,7 @@ import dev.handsup.common.exception.NotFoundException;
 import dev.handsup.common.exception.ValidationException;
 import dev.handsup.fixture.UserFixture;
 import dev.handsup.user.domain.User;
-import dev.handsup.user.dto.request.JoinUserRequest;
+import dev.handsup.user.dto.request.JoinUserCredentialsRequest;
 import dev.handsup.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,15 +34,9 @@ import dev.handsup.user.repository.UserRepository;
 class UserServiceTest {
 
 	private final User user = UserFixture.user1();
-	private final JoinUserRequest request = JoinUserRequest.of(
+	private final JoinUserCredentialsRequest request = JoinUserCredentialsRequest.of(
 		user.getEmail(),
-		user.getPassword(),
-		user.getNickname(),
-		user.getAddress().getSi(),
-		user.getAddress().getGu(),
-		user.getAddress().getDong(),
-		user.getProfileImageUrl(),
-		List.of(1L)
+		user.getPassword()
 	);
 	@Mock
 	private UserRepository userRepository;
@@ -104,7 +98,7 @@ class UserServiceTest {
 			.willReturn(PreferredProductCategory.of(savedUser, productCategory));
 
 		// when
-		Long userId = userService.join(request);
+		Long userId = userService.joinCredentials(request);
 
 		// then
 		assertThat(userId).isNotNull().isEqualTo(1L);
@@ -119,7 +113,7 @@ class UserServiceTest {
 			.willReturn(Optional.of(user));
 
 		// when & then
-		assertThatThrownBy(() -> userService.join(request))
+		assertThatThrownBy(() -> userService.joinCredentials(request))
 			.isInstanceOf(ValidationException.class)
 			.hasMessageContaining(DUPLICATED_EMAIL.getMessage());
 		verify(userRepository, never()).save(any(User.class));

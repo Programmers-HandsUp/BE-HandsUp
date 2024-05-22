@@ -39,7 +39,8 @@ import dev.handsup.review.domain.UserReviewLabel;
 import dev.handsup.review.repository.ReviewLabelRepository;
 import dev.handsup.review.repository.ReviewRepository;
 import dev.handsup.user.domain.User;
-import dev.handsup.user.dto.request.JoinUserRequest;
+import dev.handsup.user.dto.request.JoinUserCredentialsRequest;
+import dev.handsup.user.dto.request.JoinUserProfileRequest;
 import dev.handsup.user.repository.UserRepository;
 import dev.handsup.user.repository.UserReviewLabelRepository;
 
@@ -65,10 +66,34 @@ class UserApiControllerTest extends ApiTestSupport {
 
 	@Test
 	@DisplayName("[[회원가입 API] 회원이 등록되고 회원 ID를 응답한다]")
-	void joinUserTest() throws Exception {
-		JoinUserRequest joinUserRequest = JoinUserRequest.of(
+	void joinStep1Test() throws Exception {
+		/*
+		Step1
+		 */
+		JoinUserCredentialsRequest joinUserCredentialRequest = JoinUserCredentialsRequest.of(
 			"hello12345@naver.com",
-			user.getPassword(),
+			user.getPassword()
+		);
+
+		// when
+		ResultActions actions = mockMvc.perform(
+			post("/api/users/step1")
+				.contentType(APPLICATION_JSON)
+				.content(toJson(joinUserCredentialRequest))
+		);
+
+		// then
+		actions.andExpect(status().isOk())
+			.andDo(MockMvcResultHandlers.print())
+			.andExpect(jsonPath("$.userId").exists());
+
+		assertThat(userRepository.findByEmail(user.getEmail())).isPresent();
+
+		/*
+		Step2
+		 */
+		JoinUserProfileRequest joinUserProfileRequest = JoinUserProfileRequest.of(
+			"hello12345@naver.com",
 			user.getNickname(),
 			user.getAddress().getSi(),
 			user.getAddress().getGu(),
@@ -77,10 +102,10 @@ class UserApiControllerTest extends ApiTestSupport {
 			List.of(1L)
 		);
 		// when
-		ResultActions actions = mockMvc.perform(
-			post("/api/users")
+		actions = mockMvc.perform(
+			post("/api/users/step2")
 				.contentType(APPLICATION_JSON)
-				.content(toJson(joinUserRequest))
+				.content(toJson(joinUserProfileRequest))
 		);
 
 		// then

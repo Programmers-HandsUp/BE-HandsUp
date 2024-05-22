@@ -36,7 +36,8 @@ import dev.handsup.support.DatabaseCleaner;
 import dev.handsup.support.DatabaseCleanerExtension;
 import dev.handsup.support.TestContainerSupport;
 import dev.handsup.user.domain.User;
-import dev.handsup.user.dto.request.JoinUserRequest;
+import dev.handsup.user.dto.request.JoinUserCredentialsRequest;
+import dev.handsup.user.dto.request.JoinUserProfileRequest;
 import dev.handsup.user.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
@@ -78,9 +79,13 @@ public abstract class ApiTestSupport extends TestContainerSupport {
 			return;
 		}
 
-		JoinUserRequest joinUserRequest = JoinUserRequest.of(
+		JoinUserCredentialsRequest joinUserCredentialRequest = JoinUserCredentialsRequest.of(
 			user.getEmail(),
-			user.getPassword(),
+			user.getPassword()
+		);
+
+		JoinUserProfileRequest joinUserProfileRequest = JoinUserProfileRequest.of(
+			user.getEmail(),
 			user.getNickname(),
 			user.getAddress().getSi(),
 			user.getAddress().getGu(),
@@ -93,9 +98,16 @@ public abstract class ApiTestSupport extends TestContainerSupport {
 
 		mockMvc.perform(
 			MockMvcRequestBuilders
-				.post("/api/users")
+				.post("/api/users/step1")
 				.contentType(APPLICATION_JSON)
-				.content(toJson(joinUserRequest))
+				.content(toJson(joinUserCredentialRequest))
+		);
+
+		mockMvc.perform(
+			MockMvcRequestBuilders
+				.post("/api/users/step2")
+				.contentType(APPLICATION_JSON)
+				.content(toJson(joinUserProfileRequest))
 		);
 
 		LoginRequest loginRequest = LoginRequest.of(
