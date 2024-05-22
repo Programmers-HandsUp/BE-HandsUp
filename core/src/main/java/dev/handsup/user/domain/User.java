@@ -36,7 +36,7 @@ public class User extends TimeBaseEntity {
 	@Column(name = "password", nullable = false)
 	private String password;
 
-	@Column(name = "nickname", nullable = false)
+	@Column(name = "nickname")
 	private String nickname;
 
 	@Column(name = "score", nullable = false)
@@ -70,6 +70,7 @@ public class User extends TimeBaseEntity {
 		this.profileImageUrl = profileImageUrl;
 	}
 
+	//==테스트용 생성자==//
 	private User(
 		Long id,
 		String email,
@@ -87,21 +88,13 @@ public class User extends TimeBaseEntity {
 		this.profileImageUrl = profileImageUrl;
 	}
 
-	//==테스트용 생성자==//
-
 	public static User of(
 		String email,
-		String password,
-		String nickname,
-		Address address,
-		String profileImageUrl
+		String password
 	) {
 		return User.builder()
 			.email(email)
 			.password(password)
-			.nickname(nickname)
-			.address(address)
-			.profileImageUrl(profileImageUrl)
 			.build();
 	}
 
@@ -124,8 +117,6 @@ public class User extends TimeBaseEntity {
 	) {
 		Assert.hasText(email, getNotEmptyMessage("User", "email"));
 		Assert.hasText(password, getNotEmptyMessage("User", "password"));
-		Assert.hasText(nickname, getNotEmptyMessage("User", "nickname"));
-		Assert.notNull(address, getNotNullMessage("User", "address"));
 		// 이메일 패턴 검증
 		String emailRegex = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z]){0,19}"
 			+ "@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z]){0,19}[.][a-zA-Z]{2,3}$";
@@ -147,5 +138,11 @@ public class User extends TimeBaseEntity {
 		} else if (score > 200) {
 			score = 200;
 		}
+	}
+
+	public void updateProfile(String nickname, Address address, String profileImageUrl) {
+		this.nickname = nickname;
+		this.address = address;
+		this.profileImageUrl = profileImageUrl;
 	}
 }
