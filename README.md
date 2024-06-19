@@ -1,24 +1,29 @@
 <h3 align="center">
-  <img src="https://github.com/Programmers-HandsUp/BE-handsup/assets/77109954/8f131580-df1d-41a4-9f78-7dc5dbf623ea"/>
+  <img width="1600" src="https://github.com/Programmers-HandsUp/BE-handsup/assets/77109954/8f131580-df1d-41a4-9f78-7dc5dbf623ea"/>
 </h3>
+
+<br>
 
 ## 📢 프로젝트 소개
 
 <div align="center">
   <img width="1600" alt="image" src="https://github.com/Programmers-HandsUp/BE-handsup/assets/77109954/8e3b8727-a732-4b9c-a575-c2bdca9f576b">
 </div>
+<br>
 
 ## 📁 DB ERD
 
 <h3 align="center">
   <img width="1600" alt="image" src="https://github.com/Programmers-HandsUp/BE-handsup/assets/77109954/a6253b8b-497a-4cfe-839a-c10d25d349a9">
 </h3>
+<br>
 
 ## ⚙️ CI/CD Pipeline
 
 <h3 align="center">
   <img width="1600" alt="image" src="https://github.com/Programmers-HandsUp/BE-handsup/assets/77109954/79ef0f21-d86b-45ae-a955-03d60b5ccfcb">
 </h3>
+<br>
 
 ## 🛠️ 기술 스택
 
@@ -44,12 +49,11 @@
   <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
 
 
-
 <br>
 
 ## 👥 팀원 소개
 
-<div align="center">
+<div>
   <table>
     <tr>
       <th>
